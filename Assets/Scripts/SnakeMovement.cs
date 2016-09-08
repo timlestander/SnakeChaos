@@ -13,6 +13,7 @@ public class SnakeMovement : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		SpawnPlayer ();
 		boostText.text = "Boost: " + boostCharge + "%";
 	}
 
@@ -37,11 +38,24 @@ public class SnakeMovement : MonoBehaviour {
 		}
 	}
 
+	public int respawnTime = 2;
 	void OnTriggerEnter2D(Collider2D other) 
 	{
 		gameObject.SetActive (false);
 		foreach (Transform body in bodyParts) {
 			body.gameObject.SetActive (false);
+		}
+		Invoke("SpawnPlayer", respawnTime);
+	}
+
+	void SpawnPlayer() {
+		float xPos = Random.Range (-3f, 7.5f);
+		float yPos = Random.Range (-3.3f, 3.3f);
+		transform.position = new Vector3(xPos, 0, 0);
+		gameObject.SetActive (true);
+		foreach (Transform body in bodyParts) {
+			body.gameObject.transform.position = new Vector3 (xPos, 0, 0);
+			body.gameObject.SetActive (true);
 		}
 	}
 
