@@ -7,7 +7,7 @@ public class SnakeBody : MonoBehaviour {
 	private Transform head;
 	private Vector3 movementVelocity;
 	[Range(0.0f,1.0f)]
-	public float overTime = 0.5f;
+	public float overTime = 0.02f;
 
 	// Use this for initialization
 	void Start () {
@@ -18,15 +18,13 @@ public class SnakeBody : MonoBehaviour {
 			}
 		}
 	}
-	
+		
 	// Update is called once per frame
 	void FixedUpdate () {
 		if (myOrder == 0) {
 			transform.position = Vector3.SmoothDamp (transform.position, head.position, ref movementVelocity, overTime);
-			transform.LookAt (head.transform.position);
 		} else {
 			transform.position = Vector3.SmoothDamp (transform.position, head.GetComponent<SnakeMovement> ().bodyParts [myOrder - 1].position, ref movementVelocity, overTime);
-			transform.LookAt (head.transform.position);
 		}
-	}
+	} 
 }

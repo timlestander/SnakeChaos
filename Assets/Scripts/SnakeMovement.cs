@@ -37,6 +37,14 @@ public class SnakeMovement : MonoBehaviour {
 		}
 	}
 
+	void OnTriggerEnter2D(Collider2D other) 
+	{
+		gameObject.SetActive (false);
+		foreach (Transform body in bodyParts) {
+			body.gameObject.SetActive (false);
+		}
+	}
+
 	void setBoostText() {
 		boostText.text = "Boost: " + Mathf.Ceil(boostCharge) + "%";
 	}
