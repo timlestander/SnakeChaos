@@ -9,15 +9,25 @@ public class SnakeMovement : MonoBehaviour {
 	public float rotationSensitivity = 50.0f;
 	public float speed = 3.5f;
 	public float boostCharge = 100f;
-	public Text boostText;
 
 	public KeyCode leftTurn;
 	public KeyCode rightTurn;
+	public KeyCode boostKey;
+
+	Text boostText;
+	Rect boostRect;
+	Texture2D boostTexture;
 
 	// Use this for initialization
 	void Start () {
 		SpawnPlayer ();
 		boostText.text = "Boost: " + boostCharge + "%";
+
+		boostRect = new Rect (Screen.width / 2, Screen.height / 2, Screen.width / 3, Screen.height / 50);
+
+		boostTexture = new Texture2D (1, 1);
+		boostTexture.SetPixel (0, 0, Color.red);
+		boostTexture.Apply ();
 	}
 
 	// Update is called once per frame
@@ -28,7 +38,7 @@ public class SnakeMovement : MonoBehaviour {
 		if (Input.GetKey (rightTurn)) {
 			currentRotation -= rotationSensitivity * Time.deltaTime;
 		}
-		if (Input.GetKey (KeyCode.Space) && boostCharge > 1) {
+		if (Input.GetKey (boostKey) && boostCharge > 1) {
 			speed = 7.0f;
 			boostCharge = boostCharge - 2f;
 			setBoostText ();
@@ -80,7 +90,12 @@ public class SnakeMovement : MonoBehaviour {
 		transform.rotation = Quaternion.Euler (new Vector3 (transform.rotation.x, transform.rotation.y, currentRotation));
 	}
 
-	void Boost() {
-		speed = 7f;
+	void OnGUI() {
+		float ratio = boostCharge / 100;
+		float rectWidth = ratio * Screen.width / 3;
+		boostRect.width = rectWidth;
+		GUI.DrawTexture (boostRect, boostTexture);
+
 	}
+
 }
