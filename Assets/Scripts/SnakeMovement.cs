@@ -9,6 +9,7 @@ public class SnakeMovement : MonoBehaviour {
 	public float rotationSensitivity = 50.0f;
 	public float speed = 3.5f;
 	public float boostCharge = 100f;
+    public bool powerupTriggered = false;
 
 	public KeyCode leftTurn;
 	public KeyCode rightTurn;
@@ -24,7 +25,6 @@ public class SnakeMovement : MonoBehaviour {
 		boostText.text = "Boost: " + boostCharge + "%";
 
 		boostRect = new Rect (Screen.width / 2, Screen.height / 2, Screen.width / 3, Screen.height / 50);
-
 		boostTexture = new Texture2D (1, 1);
 		boostTexture.SetPixel (0, 0, Color.red);
 		boostTexture.Apply ();
@@ -32,34 +32,57 @@ public class SnakeMovement : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
+		
 		if (Input.GetKey (leftTurn)) {
 			currentRotation += rotationSensitivity * Time.deltaTime;
 		}
+
 		if (Input.GetKey (rightTurn)) {
 			currentRotation -= rotationSensitivity * Time.deltaTime;
 		}
-		if (Input.GetKey (boostKey) && boostCharge > 1) {
-			speed = 7.0f;
-			boostCharge = boostCharge - 2f;
+
+        if (powerupTriggered == false)
+        {
+            if (Input.GetKeyDown(boostKey) && boostCharge > 1)
+            {
+                speed = 7.0f;
+                boostCharge = boostCharge - 2f;
+                setBoostText();
+            }
+
+            if (Input.GetKeyUp(boostKey))
+            {
+
+                speed = 3.5f;
+            }
+        }
+
+        if (boostCharge < 99) {
+			boostCharge = boostCharge + 0.1f;
 			setBoostText ();
-		} else { 
-			if (boostCharge < 99) {
-				boostCharge = boostCharge + 0.1f;
-				setBoostText ();
-			}
-			speed = 3.5f;
 		}
 	}
 
 	public int respawnTime = 2;
+    public int powerupTime = 3;
 	void OnTriggerEnter2D(Collider2D other) 
 	{
-		gameObject.SetActive (false);
-		foreach (Transform body in bodyParts) {
-			body.gameObject.SetActive (false);
-		}
-		Invoke ("SpawnPlayer", respawnTime);
-	}
+        if (other.gameObject.CompareTag("Wall"))
+        {
+            gameObject.SetActive(false);
+            foreach (Transform body in bodyParts)
+            {
+                body.gameObject.SetActive(false);
+            }
+            Invoke("SpawnPlayer", respawnTime);
+        }
+        else if (other.gameObject.CompareTag("selfSpeed"))
+        {
+            activateSelfSpeed();
+            Invoke("deactivateSelfSpeed", powerupTime);
+            other.gameObject.SetActive(false);
+        }
+    }
 
 	void SpawnPlayer() {
 		float xPos = Random.Range (-3f, 7.5f);
@@ -95,7 +118,18 @@ public class SnakeMovement : MonoBehaviour {
 		float rectWidth = ratio * Screen.width / 3;
 		boostRect.width = rectWidth;
 		GUI.DrawTexture (boostRect, boostTexture);
-
 	}
+		
+    void activateSelfSpeed()
+    {
+        speed = 7.0f;
+        powerupTriggered = true;
 
+    }
+
+    void deactivateSelfSpeed()
+    {
+        speed = 3.5f;
+        powerupTriggered = false;
+    }
 }
