@@ -11,6 +11,9 @@ public class SnakeMovement : MonoBehaviour {
 	public float boostCharge = 100f;
 	public Text boostText;
 
+	public KeyCode leftTurn;
+	public KeyCode rightTurn;
+
 	// Use this for initialization
 	void Start () {
 		SpawnPlayer ();
@@ -19,10 +22,10 @@ public class SnakeMovement : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		if (Input.GetKey (KeyCode.A)) {
+		if (Input.GetKey (leftTurn)) {
 			currentRotation += rotationSensitivity * Time.deltaTime;
 		}
-		if (Input.GetKey (KeyCode.D)) {
+		if (Input.GetKey (rightTurn)) {
 			currentRotation -= rotationSensitivity * Time.deltaTime;
 		}
 		if (Input.GetKey (KeyCode.Space) && boostCharge > 1) {
@@ -45,16 +48,16 @@ public class SnakeMovement : MonoBehaviour {
 		foreach (Transform body in bodyParts) {
 			body.gameObject.SetActive (false);
 		}
-		Invoke("SpawnPlayer", respawnTime);
+		Invoke ("SpawnPlayer", respawnTime);
 	}
 
 	void SpawnPlayer() {
 		float xPos = Random.Range (-3f, 7.5f);
 		float yPos = Random.Range (-3.3f, 3.3f);
-		transform.position = new Vector3(xPos, 0, 0);
+		transform.position = new Vector3(xPos, yPos, 0);
 		gameObject.SetActive (true);
 		foreach (Transform body in bodyParts) {
-			body.gameObject.transform.position = new Vector3 (xPos, 0, 0);
+			body.gameObject.transform.position = new Vector3 (xPos, yPos, 0);
 			body.gameObject.SetActive (true);
 		}
 	}

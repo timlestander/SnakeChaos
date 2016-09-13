@@ -4,14 +4,14 @@ using System.Collections;
 public class SnakeBody : MonoBehaviour {
 
 	private int myOrder;
-	private Transform head;
 	private Vector3 movementVelocity;
 	[Range(0.0f,1.0f)]
 	public float overTime = 0.02f;
+	public Transform head;
 
 	// Use this for initialization
 	void Start () {
-		head = GameObject.FindGameObjectWithTag ("Player").gameObject.transform;
+		// head = GameObject.FindGameObjectWithTag ("Player").gameObject.transform;
 		for (int i = 0; i < head.GetComponent<SnakeMovement> ().bodyParts.Count; i++) {
 			if (gameObject == head.GetComponent<SnakeMovement> ().bodyParts [i].gameObject) {
 				myOrder = i;
@@ -27,4 +27,5 @@ public class SnakeBody : MonoBehaviour {
 			transform.position = Vector3.SmoothDamp (transform.position, head.GetComponent<SnakeMovement> ().bodyParts [myOrder - 1].position, ref movementVelocity, overTime);
 		}
 	} 
+		
 }
