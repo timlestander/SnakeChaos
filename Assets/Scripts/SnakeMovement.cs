@@ -10,6 +10,7 @@ public class SnakeMovement : MonoBehaviour {
 	public float speed = 3.5f;
 	public float boostCharge = 100f;
 	public Text boostText;
+    public bool powerupTriggered = false;
 
 	public KeyCode leftTurn;
 	public KeyCode rightTurn;
@@ -25,31 +26,52 @@ public class SnakeMovement : MonoBehaviour {
 		if (Input.GetKey (leftTurn)) {
 			currentRotation += rotationSensitivity * Time.deltaTime;
 		}
+
 		if (Input.GetKey (rightTurn)) {
 			currentRotation -= rotationSensitivity * Time.deltaTime;
 		}
-		if (Input.GetKey (KeyCode.Space) && boostCharge > 1) {
-			speed = 7.0f;
-			boostCharge = boostCharge - 2f;
+        if (powerupTriggered == false)
+        {
+            if (Input.GetKeyDown(KeyCode.Space) && boostCharge > 1)
+            {
+                speed = 7.0f;
+                boostCharge = boostCharge - 2f;
+                setBoostText();
+            }
+
+            if (Input.GetKeyUp(KeyCode.Space))
+            {
+
+                speed = 3.5f;
+            }
+        }
+
+         if (boostCharge < 99) {
+			boostCharge = boostCharge + 0.1f;
 			setBoostText ();
-		} else { 
-			if (boostCharge < 99) {
-				boostCharge = boostCharge + 0.1f;
-				setBoostText ();
-			}
-			speed = 3.5f;
 		}
 	}
 
 	public int respawnTime = 2;
+    public int powerupTime = 3;
 	void OnTriggerEnter2D(Collider2D other) 
 	{
-		gameObject.SetActive (false);
-		foreach (Transform body in bodyParts) {
-			body.gameObject.SetActive (false);
-		}
-		Invoke ("SpawnPlayer", respawnTime);
-	}
+        if (other.gameObject.CompareTag("Wall"))
+        {
+            gameObject.SetActive(false);
+            foreach (Transform body in bodyParts)
+            {
+                body.gameObject.SetActive(false);
+            }
+            Invoke("SpawnPlayer", respawnTime);
+        }
+        else if (other.gameObject.CompareTag("selfSpeed"))
+        {
+            activateSelfSpeed();
+            Invoke("deactivateSelfSpeed", powerupTime);
+            other.gameObject.SetActive(false);
+        }
+    }
 
 	void SpawnPlayer() {
 		float xPos = Random.Range (-3f, 7.5f);
@@ -83,4 +105,16 @@ public class SnakeMovement : MonoBehaviour {
 	void Boost() {
 		speed = 7f;
 	}
+
+    void activateSelfSpeed()
+    {
+        speed = 7.0f;
+        powerupTriggered = true;
+
+    }
+    void deactivateSelfSpeed()
+    {
+        speed = 3.5f;
+        powerupTriggered = false;
+    }
 }
