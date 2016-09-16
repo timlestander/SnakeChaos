@@ -174,8 +174,7 @@ public class Player : MonoBehaviour {
     }
 
 	float lerpTime = 0.1f;
-	IEnumerator MakeItGlow() { 
-
+	IEnumerator MakeItGlow() {
 		while (isIt) 
 		{
 			gameObject.GetComponent<SpriteRenderer> ().color = Color.Lerp(Color.white, Color.black, lerpTime);
