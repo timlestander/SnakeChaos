@@ -33,7 +33,6 @@ public class Player : MonoBehaviour {
 		boostTexture = new Texture2D (1, 1);
 		boostTexture.SetPixel (0, 0, Color.red);
 		boostTexture.Apply ();
-		
 	}
 
 	// Update is called once per frame
@@ -71,44 +70,43 @@ public class Player : MonoBehaviour {
     public int powerupTime = 3;
 	void OnTriggerEnter2D(Collider2D other) 
 	{
-        if (other.gameObject.CompareTag("Wall"))
-        {
-            gameObject.SetActive(false);
-            foreach (Transform body in bodyParts)
-            {
-                body.gameObject.SetActive(false);
-                speed = 3.5f;
-            }
-            Invoke("SpawnPlayer", respawnTime);
-        }
-        else if (other.gameObject.CompareTag("selfSpeed"))
-        {
-            activateSelfSpeed();
-            Invoke("deactivateSelfSpeed", powerupTime);
-            other.gameObject.SetActive(false);
-        }
-        else if (other.gameObject.CompareTag("enemySpeed"))
-        {
-            activateEnemySpeed();
-            Invoke("deactivateEnemySpeed", powerupTime);
-            other.gameObject.SetActive(false);
-        }
-        else if (other.gameObject.CompareTag("Diamond"))
-        {
-            isIt = true;
-            StartCoroutine("MakeItGlow");
-            other.gameObject.SetActive(false);
-        }
-        else if (other.gameObject.CompareTag("Immortal"))
-        {
-            other.gameObject.SetActive(false);
-            
-        }
+		if (other.gameObject.CompareTag ("Wall")) {
+			gameObject.SetActive (false);
+			foreach (Transform body in bodyParts) {
+				body.gameObject.SetActive (false);
+			}
+			Invoke ("SpawnPlayer", respawnTime);
+		} else if (other.gameObject.CompareTag ("selfSpeed")) {
+			activateSelfSpeed ();
+			Invoke ("deactivateSelfSpeed", powerupTime);
+			other.gameObject.SetActive (false);
+		} else if (other.gameObject.CompareTag ("enemySpeed")) {
+			activateEnemySpeed ();
+			Invoke ("deactivateEnemySpeed", powerupTime);
+			other.gameObject.SetActive (false);
+		} else if (other.gameObject.CompareTag ("Diamond")) {
+			isIt = true;
+			StartCoroutine ("MakeItGlow");
+			other.gameObject.SetActive (false);
+		} else if (other.gameObject.CompareTag ("Immortal")) {
+			other.gameObject.SetActive (false);
+		} else if (other.gameObject.CompareTag("Bodypart")) {
+			if (!bodyParts.Contains (other.transform)) {
+				gameObject.SetActive (false);
+
+				foreach (Transform body in bodyParts) {
+					body.gameObject.SetActive (false);
+					Invoke ("SpawnPlayer", respawnTime);
+				}
+			}
+		}
+
     }
 
 	void SpawnPlayer() {
 		float xPos = Random.Range (-3f, 7.5f);
 		float yPos = Random.Range (-3.3f, 3.3f);
+		speed = 3.5f;
 		transform.position = new Vector3(xPos, yPos, 0);
 		gameObject.SetActive (true);
 		foreach (Transform body in bodyParts) {
@@ -178,7 +176,8 @@ public class Player : MonoBehaviour {
 	float lerpTime = 0.1f;
 	IEnumerator MakeItGlow() { 
 
-		while (isIt) {
+		while (isIt) 
+		{
 			gameObject.GetComponent<SpriteRenderer> ().color = Color.Lerp(Color.white, Color.black, lerpTime);
 			foreach (Transform body in bodyParts) {
 				body.GetComponent<SpriteRenderer> ().color = Color.Lerp(Color.white, Color.black, lerpTime);
