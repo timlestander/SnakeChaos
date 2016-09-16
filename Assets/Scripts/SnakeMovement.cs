@@ -70,6 +70,12 @@ public class SnakeMovement : MonoBehaviour {
             activateSelfSpeed();
             Invoke("deactivateSelfSpeed", powerupTime);
             other.gameObject.SetActive(false);
+        }else if (other.gameObject.CompareTag("enemySpeed"))
+        {
+            activateEnemySpeed();
+            Invoke("deactivateEnemySpeed", powerupTime);
+            other.gameObject.SetActive(false);
+           
         }
     }
 
@@ -116,5 +122,29 @@ public class SnakeMovement : MonoBehaviour {
     {
         speed = 3.5f;
         powerupTriggered = false;
+    }
+
+    void activateEnemySpeed()
+    {
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        foreach (GameObject player in players)
+        {
+            if (player != gameObject)
+            {
+                player.GetComponent<SnakeMovement>().speed = 7.0f;
+            }
+        }
+    }
+
+    void deactivateEnemySpeed()
+    {
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        foreach (GameObject player in players)
+        {
+            if (player != gameObject)
+            {
+                player.GetComponent<SnakeMovement>().speed = 3.5f;
+            }
+        }
     }
 }
