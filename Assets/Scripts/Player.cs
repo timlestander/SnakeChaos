@@ -3,26 +3,42 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 
-public class SnakeMovement : MonoBehaviour {
+public class Player : MonoBehaviour {
 
 	public List<Transform> bodyParts = new List<Transform> ();
 	public float rotationSensitivity = 50.0f;
 	public float speed = 3.5f;
 	public float boostCharge = 100f;
-	public Text boostText;
     public bool powerupTriggered = false;
 
-	public KeyCode leftTurn;
-	public KeyCode rightTurn;
+	KeyCode leftTurn;
+	KeyCode rightTurn;
+	KeyCode boostKey;
+
+	Rect boostRect;
+	Texture2D boostTexture;
+
+	bool isIt = false;
+
+	public void setUp(KeyCode left, KeyCode right, KeyCode boost) {
+		leftTurn = left;
+		rightTurn = right;
+		boostKey = boost;
+	}
 
 	// Use this for initialization
 	void Start () {
 		SpawnPlayer ();
-		boostText.text = "Boost: " + boostCharge + "%";
+		boostRect = new Rect (20, 20, 100, 5);
+		boostTexture = new Texture2D (1, 1);
+		boostTexture.SetPixel (0, 0, Color.red);
+		boostTexture.Apply ();
+		StartCoroutine ("MakeItGlow");
 	}
 
 	// Update is called once per frame
 	void Update () {
+		
 		if (Input.GetKey (leftTurn)) {
 			currentRotation += rotationSensitivity * Time.deltaTime;
 		}
@@ -30,25 +46,24 @@ public class SnakeMovement : MonoBehaviour {
 		if (Input.GetKey (rightTurn)) {
 			currentRotation -= rotationSensitivity * Time.deltaTime;
 		}
+
         if (powerupTriggered == false)
         {
-            if (Input.GetKeyDown(KeyCode.Space) && boostCharge > 1)
+            if (Input.GetKeyDown(boostKey) && boostCharge > 1)
             {
                 speed = 7.0f;
                 boostCharge = boostCharge - 2f;
-                setBoostText();
             }
 
-            if (Input.GetKeyUp(KeyCode.Space))
+			if (Input.GetKeyUp(boostKey) || boostCharge < 1)
             {
 
                 speed = 3.5f;
             }
         }
 
-         if (boostCharge < 99) {
+        if (boostCharge < 99) {
 			boostCharge = boostCharge + 0.1f;
-			setBoostText ();
 		}
 	}
 
@@ -90,10 +105,6 @@ public class SnakeMovement : MonoBehaviour {
 		}
 	}
 
-	void setBoostText() {
-		boostText.text = "Boost: " + Mathf.Ceil(boostCharge) + "%";
-	}
-
 	public float currentRotation;
 	void FixedUpdate() {
 		MoveForward ();
@@ -108,16 +119,20 @@ public class SnakeMovement : MonoBehaviour {
 		transform.rotation = Quaternion.Euler (new Vector3 (transform.rotation.x, transform.rotation.y, currentRotation));
 	}
 
-	void Boost() {
-		speed = 7f;
+	void OnGUI() {
+		float ratio = boostCharge / 100;
+		float rectWidth = ratio * 100;
+		boostRect.width = rectWidth;
+		GUI.DrawTexture (boostRect, boostTexture);
 	}
-
+		
     void activateSelfSpeed()
     {
         speed = 7.0f;
         powerupTriggered = true;
 
     }
+
     void deactivateSelfSpeed()
     {
         speed = 3.5f;
@@ -131,7 +146,7 @@ public class SnakeMovement : MonoBehaviour {
         {
             if (player != gameObject)
             {
-                player.GetComponent<SnakeMovement>().speed = 7.0f;
+                player.GetComponent<Player>().speed = 7.0f;
             }
         }
     }
@@ -143,8 +158,35 @@ public class SnakeMovement : MonoBehaviour {
         {
             if (player != gameObject)
             {
-                player.GetComponent<SnakeMovement>().speed = 3.5f;
+                player.GetComponent<Player>().speed = 3.5f;
             }
         }
     }
+
+	float lerpTime = 1f;
+	IEnumerator MakeItGlow() { 
+
+		while (isIt) {
+			
+			gameObject.GetComponent<SpriteRenderer> ().color = Color.Lerp(Color.white, Color.black, lerpTime);
+			foreach (Transform body in bodyParts) {
+				body.GetComponent<SpriteRenderer> ().color = Color.Lerp(Color.white, Color.black, lerpTime);
+			}
+
+			yield return new WaitForSeconds (lerpTime);
+
+			gameObject.GetComponent<SpriteRenderer> ().color = Color.Lerp(Color.black, Color.white, lerpTime);
+			foreach (Transform body in bodyParts) {
+				body.GetComponent<SpriteRenderer> ().color = Color.Lerp(Color.black, Color.white, lerpTime);
+			}
+
+			yield return new WaitForSeconds (lerpTime);
+
+			foreach (Transform body in bodyParts) {
+				body.GetComponent<SpriteRenderer> ().color = Color.Lerp (Color.white, Color.black, lerpTime);
+			}
+
+			yield return true;
+		}
+	}
 }

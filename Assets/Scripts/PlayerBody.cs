@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class SnakeBody : MonoBehaviour {
+public class PlayerBody : MonoBehaviour {
 
 	private int myOrder;
 	private Vector3 movementVelocity;
@@ -12,8 +12,8 @@ public class SnakeBody : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		// head = GameObject.FindGameObjectWithTag ("Player").gameObject.transform;
-		for (int i = 0; i < head.GetComponent<SnakeMovement> ().bodyParts.Count; i++) {
-			if (gameObject == head.GetComponent<SnakeMovement> ().bodyParts [i].gameObject) {
+		for (int i = 0; i < head.GetComponent<Player> ().bodyParts.Count; i++) {
+			if (gameObject == head.GetComponent<Player> ().bodyParts [i].gameObject) {
 				myOrder = i;
 			}
 		}
@@ -24,7 +24,7 @@ public class SnakeBody : MonoBehaviour {
 		if (myOrder == 0) {
 			transform.position = Vector3.SmoothDamp (transform.position, head.position, ref movementVelocity, overTime);
 		} else {
-			transform.position = Vector3.SmoothDamp (transform.position, head.GetComponent<SnakeMovement> ().bodyParts [myOrder - 1].position, ref movementVelocity, overTime);
+			transform.position = Vector3.SmoothDamp (transform.position, head.GetComponent<Player> ().bodyParts [myOrder - 1].position, ref movementVelocity, overTime);
 		}
 	} 
 		
