@@ -10,6 +10,7 @@ public class Player : MonoBehaviour {
 	public float speed = 3.5f;
 	public float boostCharge = 100f;
     public bool powerupTriggered = false;
+    public bool boostTriggered = false; 
 
 	KeyCode leftTurn;
 	KeyCode rightTurn;
@@ -52,11 +53,13 @@ public class Player : MonoBehaviour {
             {
                 speed = 7.0f;
                 boostCharge = boostCharge - 2f;
+                boostTriggered = true;
+
             }
 
 			if (Input.GetKeyUp(boostKey) || boostCharge < 1)
             {
-
+                boostTriggered = false;
                 speed = 3.5f;
             }
         }
@@ -75,18 +78,21 @@ public class Player : MonoBehaviour {
 		} else if (other.gameObject.CompareTag ("selfSpeed")) {
 			activateSelfSpeed ();
 			Invoke ("deactivateSelfSpeed", powerupTime);
-			other.gameObject.SetActive (false);
-		} else if (other.gameObject.CompareTag ("enemySpeed")) {
+            Destroy(other.gameObject);
+        }
+        else if (other.gameObject.CompareTag ("enemySpeed")) {
 			activateEnemySpeed ();
 			Invoke ("deactivateEnemySpeed", powerupTime);
-			other.gameObject.SetActive (false);
+            Destroy(other.gameObject);
 		} else if (other.gameObject.CompareTag ("Diamond")) {
 			isIt = true;
 			StartCoroutine ("MakeItGlow");
-			other.gameObject.SetActive (false);
-		} else if (other.gameObject.CompareTag ("Immortal")) {
-			other.gameObject.SetActive (false);
-		} else if (other.gameObject.CompareTag("Bodypart")) {
+            Destroy(other.gameObject);
+        }
+        else if (other.gameObject.CompareTag ("Immortal")) {
+            Destroy(other.gameObject);
+        }
+        else if (other.gameObject.CompareTag("Bodypart")) {
 			if (!bodyParts.Contains (other.transform)) {
 				KillPlayer ();
 			}
@@ -111,6 +117,7 @@ public class Player : MonoBehaviour {
 		float xPos = Random.Range (-3f, 7.5f);
 		float yPos = Random.Range (-3.3f, 3.3f);
 		speed = 3.5f;
+        currentRotation = Random.Range(0f, 360f);
 		transform.position = new Vector3(xPos, yPos, 0);
 		gameObject.SetActive (true);
 		gameObject.GetComponent<SpriteRenderer> ().color = Color.blue;
@@ -144,15 +151,26 @@ public class Player : MonoBehaviour {
 		
     void activateSelfSpeed()
     {
-        speed = 7.0f;
+        if (boostTriggered)
+        {
+            speed = 5.25f;
+            Debug.Log("Speeeeeed: " + speed);
+        }else
+        {
+            Debug.Log("Speed: " + speed);
+            speed = speed + 1.75f;
+        }
         powerupTriggered = true;
 
     }
 
     void deactivateSelfSpeed()
     {
-        speed = 3.5f;
-        powerupTriggered = false;
+        if (speed != 3.5f) { 
+            speed = speed - 1.75f;
+            powerupTriggered = false;
+            boostTriggered = false;
+        }
     }
 
     void activateEnemySpeed()
@@ -162,7 +180,8 @@ public class Player : MonoBehaviour {
         {
             if (player != gameObject)
             {
-                player.GetComponent<Player>().speed = 7.0f;
+                player.GetComponent<Player>().speed = player.GetComponent<Player>().speed + 1.75f;
+                powerupTriggered = true;
             }
         }
     }
@@ -174,7 +193,10 @@ public class Player : MonoBehaviour {
         {
             if (player != gameObject)
             {
-                player.GetComponent<Player>().speed = 3.5f;
+                if(player.GetComponent<Player>().speed != 3.5f) { 
+                    player.GetComponent<Player>().speed = player.GetComponent<Player>().speed - 1.75f;
+                    powerupTriggered = false;
+                }
             }
         }
     }
