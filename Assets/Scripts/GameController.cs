@@ -5,6 +5,8 @@ public class GameController : MonoBehaviour {
 
 	public GameObject playerPrefab;
 	public GameObject selfspeedPrefab;
+	public GameObject enemySpeedPrefab;
+	public GameObject diamondPrefab;
 
 	// Use this for initialization
 	void Start ()
@@ -25,13 +27,28 @@ public class GameController : MonoBehaviour {
 		
 	void SpawnPowerups()
 	{
-		float x = Random.Range (-10f, 10f);
-		float y = Random.Range (-10f, 10f);
-		float spawnTime = Random.Range (1, 100);
+		float x = Random.Range (-3.9f, 8.8f);
+		float y = Random.Range (-3.9f, 4.2f);
+		float spawnTime = Random.Range (0, 200);
 
-		if (spawnTime == 50) {
-			Instantiate (selfspeedPrefab, new Vector2(x, y), Quaternion.identity);
+		if (spawnTime == 100) {
+
+			int spawnType = Random.Range (0, 2);
+
+			if (spawnType == 0) {
+				Instantiate (selfspeedPrefab, new Vector2(x, y), Quaternion.identity);
+			} else if (spawnType == 1) {
+				Instantiate(enemySpeedPrefab, new Vector2(x,y), Quaternion.identity);
+			}
 		}
+	}
+
+	public void RespawnDiamond() {
+		float x = Random.Range (-3.9f, 8.8f);
+		float y = Random.Range (-3.9f, 4.2f);
+
+		// diamond.transform.position = new Vector2 (x, y);
+		Instantiate(diamondPrefab, new Vector2(x,y), Quaternion.identity);
 	}
 			
 }

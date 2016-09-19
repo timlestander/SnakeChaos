@@ -71,11 +71,7 @@ public class Player : MonoBehaviour {
 	void OnTriggerEnter2D(Collider2D other) 
 	{
 		if (other.gameObject.CompareTag ("Wall")) {
-			gameObject.SetActive (false);
-			foreach (Transform body in bodyParts) {
-				body.gameObject.SetActive (false);
-			}
-			Invoke ("SpawnPlayer", respawnTime);
+			KillPlayer ();
 		} else if (other.gameObject.CompareTag ("selfSpeed")) {
 			activateSelfSpeed ();
 			Invoke ("deactivateSelfSpeed", powerupTime);
@@ -92,16 +88,24 @@ public class Player : MonoBehaviour {
 			other.gameObject.SetActive (false);
 		} else if (other.gameObject.CompareTag("Bodypart")) {
 			if (!bodyParts.Contains (other.transform)) {
-				gameObject.SetActive (false);
-
-				foreach (Transform body in bodyParts) {
-					body.gameObject.SetActive (false);
-					Invoke ("SpawnPlayer", respawnTime);
-				}
+				KillPlayer ();
 			}
 		}
-
     }
+
+	void KillPlayer() {
+		gameObject.SetActive (false);
+		foreach (Transform body in bodyParts) {
+			body.gameObject.SetActive (false);
+		}
+		Invoke ("SpawnPlayer", respawnTime);
+
+		if (isIt) {
+			GameObject.FindGameObjectWithTag ("GameController").GetComponent<GameController> ().RespawnDiamond ();
+		}
+
+		isIt = false;
+	}
 
 	void SpawnPlayer() {
 		float xPos = Random.Range (-3f, 7.5f);
@@ -109,9 +113,11 @@ public class Player : MonoBehaviour {
 		speed = 3.5f;
 		transform.position = new Vector3(xPos, yPos, 0);
 		gameObject.SetActive (true);
+		gameObject.GetComponent<SpriteRenderer> ().color = Color.blue;
 		foreach (Transform body in bodyParts) {
 			body.gameObject.transform.position = new Vector3 (xPos, yPos, 0);
 			body.gameObject.SetActive (true);
+			body.gameObject.GetComponent<SpriteRenderer> ().color = Color.blue;
 		}
 	}
 
@@ -198,4 +204,5 @@ public class Player : MonoBehaviour {
 			yield return true;
 		}
 	}
+
 }
