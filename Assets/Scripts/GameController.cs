@@ -31,7 +31,7 @@ public class GameController : MonoBehaviour {
 		float y = Random.Range (-3.9f, 4.2f);
 		float spawnTime = Random.Range (0, 200);
 
-		if (spawnTime == 100) {
+		if (spawnTime == 99) {
 
 			int spawnType = Random.Range (0, 2);
 
