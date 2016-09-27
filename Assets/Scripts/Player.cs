@@ -9,7 +9,7 @@ public class Player : MonoBehaviour {
 	public float rotationSensitivity = 50.0f;
 	public float speed = 3.5f;
 	public float boostCharge = 100f;
-    
+
 	bool powerupTriggered = false;
 	bool boostTriggered = false;
 
@@ -51,7 +51,7 @@ public class Player : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		
+
 		if (Input.GetKey (leftTurn)) {
 			currentRotation += rotationSensitivity * Time.deltaTime;
 		}
@@ -60,26 +60,27 @@ public class Player : MonoBehaviour {
 			currentRotation -= rotationSensitivity * Time.deltaTime;
 		}
 
-        if (powerupTriggered == false)
-        {
+		if (powerupTriggered == false)
+		{
 			if (Input.GetKey (boostKey) && boostCharge > 1) {
 				speed = 7.0f;
 				boostCharge = boostCharge - 2f;
+				boostTriggered = true;
 			}
 
 			if (Input.GetKeyUp (boostKey) || boostCharge < 1) {
 				speed = 3.5f;
 			}
 
-        }
+		}
 
-        if (boostCharge < 99) {
+		if (boostCharge < 99) {
 			boostCharge = boostCharge + 0.1f;
 		}
 	}
 
 	public int respawnTime = 2;
-    public int powerupTime = 3;
+	public int powerupTime = 3;
 	void OnTriggerEnter2D(Collider2D other) 
 	{
 		if (other.gameObject.CompareTag ("Wall")) {
@@ -87,17 +88,16 @@ public class Player : MonoBehaviour {
 		} else if (other.gameObject.CompareTag ("selfSpeed")) {
 			activateSelfSpeed ();
 			Invoke ("deactivateSelfSpeed", powerupTime);
-			other.gameObject.SetActive (false);
-		} else if (other.gameObject.CompareTag ("enemySpeed")) {
+			Destroy(other.gameObject);
+		}
+		else if (other.gameObject.CompareTag ("enemySpeed")) {
 			activateEnemySpeed ();
 			Invoke ("deactivateEnemySpeed", powerupTime);
-			other.gameObject.SetActive (false);
+			Destroy(other.gameObject);
 		} else if (other.gameObject.CompareTag ("Diamond")) {
 			isIt = true;
 			StartGlowing ();
 			//StartCoroutine ("IncreaseScore");
-			other.gameObject.SetActive (false);
-		} else if (other.gameObject.CompareTag ("Immortal")) {
 			other.gameObject.SetActive (false);
 		} else if (other.gameObject.CompareTag("Bodypart")) {
 			if (!bodyParts.Contains (other.transform)) {
@@ -115,7 +115,7 @@ public class Player : MonoBehaviour {
 				KillPlayer ();
 			}
 		}
-    }
+	}
 
 	void KillPlayer() {
 		gameObject.GetComponent<SpriteRenderer> ().enabled = false;
@@ -181,7 +181,7 @@ public class Player : MonoBehaviour {
 	string getScoreString() {
 		return "Player " + (playerId+1) + ": " + timeScore;
 	}
-		
+
 	void activateSelfSpeed()
 	{
 		if (boostTriggered)
@@ -264,6 +264,6 @@ public class Player : MonoBehaviour {
 			timeScore += 1;
 		}
 	}
-			
-		
+
+
 }
