@@ -97,7 +97,6 @@ public class Player : MonoBehaviour {
 		} else if (other.gameObject.CompareTag ("Diamond")) {
 			isIt = true;
 			StartGlowing ();
-			//StartCoroutine ("IncreaseScore");
 			other.gameObject.SetActive (false);
 		} else if (other.gameObject.CompareTag("Bodypart")) {
 			if (!bodyParts.Contains (other.transform)) {
