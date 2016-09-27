@@ -13,11 +13,17 @@ public class GameController : MonoBehaviour {
 	{
 		GameObject temp2Player = (GameObject) Instantiate (playerPrefab, Vector3.zero, Quaternion.identity);
 		Player player2 = temp2Player.GetComponentInChildren<Player> ();
-		player2.setUp (KeyCode.A, KeyCode.D, KeyCode.Z);
+		player2.setUp (KeyCode.A, KeyCode.S, KeyCode.Z, Color.green, 0);
 
 		GameObject temp1Player = (GameObject) Instantiate (playerPrefab, Vector3.zero, Quaternion.identity);
 		Player player1 = temp1Player.GetComponentInChildren<Player> ();
-		player1.setUp (KeyCode.LeftArrow, KeyCode.RightArrow, KeyCode.Space);
+		player1.setUp (KeyCode.LeftArrow, KeyCode.RightArrow, KeyCode.DownArrow, Color.red, 1);
+
+		GameObject temp3Player = (GameObject) Instantiate (playerPrefab, Vector3.zero, Quaternion.identity);
+		Player player3 = temp3Player.GetComponentInChildren<Player> ();
+		player3.setUp (KeyCode.G, KeyCode.H, KeyCode.B, Color.cyan, 2);
+
+		RespawnDiamond ();
 	}
 	
 	// Update is called once per frame
@@ -29,16 +35,16 @@ public class GameController : MonoBehaviour {
 	{
 		float x = Random.Range (-3.9f, 8.8f);
 		float y = Random.Range (-3.9f, 4.2f);
-		float spawnTime = Random.Range (0, 200);
+		float spawnTime = Random.Range (0, 400);
 
-		if (spawnTime == 99) {
+		if (spawnTime == 200) {
 
 			int spawnType = Random.Range (0, 2);
 
 			if (spawnType == 0) {
 				Instantiate (selfspeedPrefab, new Vector2(x, y), Quaternion.identity);
 			} else if (spawnType == 1) {
-				Instantiate(enemySpeedPrefab, new Vector2(x,y), Quaternion.identity);
+				Instantiate (enemySpeedPrefab, new Vector2(x, y), Quaternion.identity);
 			}
 		}
 	}
@@ -50,5 +56,5 @@ public class GameController : MonoBehaviour {
 		// diamond.transform.position = new Vector2 (x, y);
 		Instantiate(diamondPrefab, new Vector2(x,y), Quaternion.identity);
 	}
-			
+		
 }
