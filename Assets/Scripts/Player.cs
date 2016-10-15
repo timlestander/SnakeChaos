@@ -19,7 +19,6 @@ public class Player : MonoBehaviour {
 
 	Rect boostRect;
 	Texture2D boostTexture;
-	Rigidbody2D r2d;
 
 	Color playerColor;
 	int playerId; 
@@ -39,7 +38,6 @@ public class Player : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		r2d = gameObject.GetComponent<Rigidbody2D> ();
 		SpawnPlayer ();
 		int yPos = 40 + (playerId * 40);
 		boostRect = new Rect (20, yPos, 100, 5);
@@ -129,6 +127,7 @@ public class Player : MonoBehaviour {
 		}
 
 		isIt = false;
+		powerupTriggered = false;
 		//StopCoroutine ("IncreaseScore");
 	}
 
