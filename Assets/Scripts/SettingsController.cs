@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class SettingsController : MonoBehaviour {
 
@@ -57,7 +58,7 @@ public class SettingsController : MonoBehaviour {
 		Debug.Log (nameValues [1].GetComponent<InputField> ().text);
 		Debug.Log (nameValues [0].GetComponent<InputField> ().text);
 
-		Application.LoadLevel ("Main");
+		SceneManager.LoadScene ("Main");
 	}
 
 
