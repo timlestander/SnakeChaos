@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class Player : MonoBehaviour {
 
 	public List<Transform> bodyParts = new List<Transform> ();
+	public Transform bodypart;
 	public float rotationSensitivity = 50.0f;
 	public float speed = 3.5f;
 	public float boostCharge = 100f;
@@ -16,6 +17,7 @@ public class Player : MonoBehaviour {
 	KeyCode leftTurn;
 	KeyCode rightTurn;
 	KeyCode boostKey;
+	string playerName;
 
 	Rect boostRect;
 	Texture2D boostTexture;
@@ -23,16 +25,18 @@ public class Player : MonoBehaviour {
 	Color playerColor;
 	int playerId; 
 
-	float timeScore;
-	float killScore;
+	[HideInInspector]
+	public float timeScore;
+	public float killScore;
 
 	bool isIt = false;
 
-	public void setUp(KeyCode left, KeyCode right, KeyCode boost, Color color, int id) {
+	public void setUp(string name, KeyCode left, KeyCode right, KeyCode boost, string color, int id) {
+		playerName = name;
 		leftTurn = left;
 		rightTurn = right;
 		boostKey = boost;
-		playerColor = color;
+		playerColor = getPlayerColor (color);
 		playerId = id;
 	}
 
@@ -98,18 +102,25 @@ public class Player : MonoBehaviour {
 			other.gameObject.SetActive (false);
 		} else if (other.gameObject.CompareTag("Bodypart")) {
 			if (!bodyParts.Contains (other.transform)) {
-				if (isIt) {
-					GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-					foreach (GameObject player in players) {
-						Player otherPlayer = player.GetComponent<Player> ();
-						if (otherPlayer.bodyParts.Contains (other.transform)) {
+				KillPlayer ();
+				Player collidingWith = null;
+				GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+				foreach (GameObject player in players) {
+					Player otherPlayer = player.GetComponent<Player> ();
+					if (otherPlayer.bodyParts.Contains (other.transform)) {
+						if (isIt) {
 							otherPlayer.isIt = true;
 							otherPlayer.StartGlowing ();
 						}
+						collidingWith = otherPlayer;
 					}
 				}
+
 				isIt = false;
-				KillPlayer ();
+
+				if (collidingWith != null) {
+					collidingWith.killScore += 1;
+				}
 			}
 		}
 	}
@@ -177,7 +188,7 @@ public class Player : MonoBehaviour {
 	}
 
 	string getScoreString() {
-		return "Player " + (playerId+1) + ": " + timeScore;
+		return playerName + ": " + timeScore + " & " + killScore;
 	}
 
 	void activateSelfSpeed()
@@ -235,9 +246,9 @@ public class Player : MonoBehaviour {
 	IEnumerator MakeItGlow() {
 		while (isIt) 
 		{
-			gameObject.GetComponent<SpriteRenderer> ().color = Color.Lerp(Color.white, Color.black, lerpTime);
+			gameObject.GetComponent<SpriteRenderer> ().color = Color.Lerp(playerColor, Color.white, lerpTime);
 			foreach (Transform body in bodyParts) {
-				body.GetComponent<SpriteRenderer> ().color = Color.Lerp(Color.white, Color.black, lerpTime);
+				body.GetComponent<SpriteRenderer> ().color = Color.Lerp(playerColor, Color.white, lerpTime);
 			}
 
 			yield return new WaitForSeconds (lerpTime);
@@ -263,5 +274,30 @@ public class Player : MonoBehaviour {
 		}
 	}
 
+	Color getPlayerColor(string colorString) {
+		Color color;
+		switch (colorString) {
+			case "GREEN":
+				color = Color.green;
+				break;
+			case "RED":
+				color = Color.red;
+				break;
+			case "YELLOW":
+				color = Color.yellow;
+				break;
+			case "BLUE":
+				color = Color.blue;
+				break;
+			case "CYAN":
+				color = Color.cyan;
+				break;
+			default: 
+				color = Color.gray;
+				break;
+		}
+
+		return color;
+	}
 
 }
