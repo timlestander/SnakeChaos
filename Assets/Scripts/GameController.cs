@@ -8,27 +8,19 @@ public class GameController : MonoBehaviour {
 	public GameObject enemySpeedPrefab;
     public GameObject diamondPrefab;
 
+	private GameObject[] players;
+
 	// Use this for initialization
 	void Start ()
 	{
-		GameObject temp2Player = (GameObject) Instantiate (playerPrefab, Vector3.zero, Quaternion.identity);
-		Player player2 = temp2Player.GetComponentInChildren<Player> ();
-		player2.setUp (KeyCode.A, KeyCode.S, KeyCode.Z, Color.green, 0);
-
-		GameObject temp1Player = (GameObject) Instantiate (playerPrefab, Vector3.zero, Quaternion.identity);
-		Player player1 = temp1Player.GetComponentInChildren<Player> ();
-		player1.setUp (KeyCode.LeftArrow, KeyCode.RightArrow, KeyCode.DownArrow, Color.red, 1);
-
-		GameObject temp3Player = (GameObject) Instantiate (playerPrefab, Vector3.zero, Quaternion.identity);
-		Player player3 = temp3Player.GetComponentInChildren<Player> ();
-		player3.setUp (KeyCode.G, KeyCode.H, KeyCode.B, Color.cyan, 2);
-
+		players = GameObject.FindGameObjectsWithTag ("Player");
 		RespawnDiamond ();
 		SpawnPowerups ();
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		checkIfSomeoneWon ();
 	}
 		
 	float spawnTime = 4f;
@@ -56,4 +48,11 @@ public class GameController : MonoBehaviour {
         Instantiate(diamondPrefab, new Vector2(x,y), Quaternion.identity);
 	}
 		
+	void checkIfSomeoneWon() {
+		foreach (GameObject player in players) {
+			if (player.GetComponent<Player> ().killScore > 1) {
+				Debug.Log ("You fucking won");
+			}
+		}
+	}
 }

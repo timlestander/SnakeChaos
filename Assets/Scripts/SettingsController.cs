@@ -2,9 +2,11 @@
 using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.Linq;
 
 public class SettingsController : MonoBehaviour {
 
+	public GameObject playerPrefab;
 	public RectTransform parentPanel;
 	public GameObject startGameBtn;
 	public GameObject addPlayerBtn;
@@ -48,18 +50,44 @@ public class SettingsController : MonoBehaviour {
 	}
 
 	void RemovePlayer() {
-		Debug.Log ("DIE DIE DIE");
+		GameObject[] nameValues = GameObject.FindGameObjectsWithTag ("nameField").OrderBy (g => g.transform.GetSiblingIndex ()).ToArray();
+		GameObject[] leftValues = GameObject.FindGameObjectsWithTag ("leftField").OrderBy (g => g.transform.GetSiblingIndex ()).ToArray();
+		GameObject[] rightValues = GameObject.FindGameObjectsWithTag ("rightField").OrderBy (g => g.transform.GetSiblingIndex ()).ToArray();
+		GameObject[] speedValues = GameObject.FindGameObjectsWithTag ("speedField").OrderBy (g => g.transform.GetSiblingIndex ()).ToArray();
+		GameObject[] colorValues = GameObject.FindGameObjectsWithTag ("colorField").OrderBy (g => g.transform.GetSiblingIndex ()).ToArray();
+
+		Destroy (nameValues [nameValues.Length - 1]);
+		Destroy (leftValues [leftValues.Length - 1]);
+		Destroy (rightValues [rightValues.Length - 1]);
+		Destroy (speedValues [speedValues.Length - 1]);
+		Destroy (colorValues [colorValues.Length - 1]);
+
+		playerCount--;
 	}
 
 	void StartGame() {
-		GameObject[] nameValues = GameObject.FindGameObjectsWithTag ("nameField");
-		GameObject[] leftValues = GameObject.FindGameObjectsWithTag ("leftField");
+		GameObject[] nameValues = GameObject.FindGameObjectsWithTag ("nameField").OrderBy (g => g.transform.GetSiblingIndex ()).ToArray();
+		GameObject[] leftValues = GameObject.FindGameObjectsWithTag ("leftField").OrderBy (g => g.transform.GetSiblingIndex ()).ToArray();
+		GameObject[] rightValues = GameObject.FindGameObjectsWithTag ("rightField").OrderBy (g => g.transform.GetSiblingIndex ()).ToArray();
+		GameObject[] speedValues = GameObject.FindGameObjectsWithTag ("speedField").OrderBy (g => g.transform.GetSiblingIndex ()).ToArray();
+		GameObject[] colorValues = GameObject.FindGameObjectsWithTag ("colorField").OrderBy (g => g.transform.GetSiblingIndex ()).ToArray();
 
-		Debug.Log (nameValues [1].GetComponent<InputField> ().text);
-		Debug.Log (nameValues [0].GetComponent<InputField> ().text);
+		Debug.Log ("LENGTH IS " + nameValues.Length);
 
-		SceneManager.LoadScene ("Main");
+		for (int x = 0; x < playerCount; x++) {
+
+			GameObject tempPlayer = (GameObject)Instantiate (playerPrefab, Vector3.zero, Quaternion.identity);
+			Player player = tempPlayer.GetComponentInChildren<Player> ();
+			string playerName = nameValues [x].GetComponent<InputField> ().text.ToString ();
+			KeyCode leftKey = (KeyCode) System.Enum.Parse (typeof(KeyCode), leftValues [x].GetComponent<Dropdown> ().GetComponentInChildren<Text>().text);
+			KeyCode rightKey = (KeyCode) System.Enum.Parse (typeof(KeyCode), rightValues [x].GetComponent<Dropdown> ().GetComponentInChildren<Text>().text);
+			KeyCode speedKey = (KeyCode) System.Enum.Parse (typeof(KeyCode), speedValues [x].GetComponent<Dropdown> ().GetComponentInChildren<Text>().text);
+			string colorString = colorValues [x].GetComponent<Dropdown> ().GetComponentInChildren<Text> ().text;
+			player.setUp (playerName, leftKey, rightKey, speedKey, colorString, x);
+
+			DontDestroyOnLoad (tempPlayer);
+			SceneManager.LoadScene ("Main");
+		}
 	}
-
 
 }
