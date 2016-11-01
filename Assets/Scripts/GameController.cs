@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class GameController : MonoBehaviour {
 
@@ -8,19 +9,27 @@ public class GameController : MonoBehaviour {
 	public GameObject enemySpeedPrefab;
     public GameObject diamondPrefab;
 
+	public GameObject restartButton;
+	public GameObject settingsButton;
+
 	private GameObject[] players;
+	private GameObject winPanel;
 
 	// Use this for initialization
 	void Start ()
 	{
+		restartButton.GetComponent<Button> ().onClick.AddListener (RestartGame);
+		settingsButton.GetComponent<Button> ().onClick.AddListener (GoToSettings);
+		winPanel = GameObject.Find ("WinPanel");
+		winPanel.SetActive (false);
 		players = GameObject.FindGameObjectsWithTag ("Player");
 		RespawnDiamond ();
 		SpawnPowerups ();
 	}
-	
+		
 	// Update is called once per frame
 	void Update () {
-		checkIfSomeoneWon ();
+		
 	}
 		
 	float spawnTime = 4f;
@@ -48,11 +57,38 @@ public class GameController : MonoBehaviour {
         Instantiate(diamondPrefab, new Vector2(x,y), Quaternion.identity);
 	}
 		
-	void checkIfSomeoneWon() {
-		foreach (GameObject player in players) {
-			if (player.GetComponent<Player> ().killScore > 1) {
-				Debug.Log ("You fucking won");
-			}
+	public void ShowWinScreen(string winner, Color color) {
+		winPanel.SetActive (true);
+		winPanel.GetComponent<Image> ().color = color;
+		GameObject.Find ("WinnerNameText").GetComponent<Text> ().text = "Good job " + winner;
+		// Deactivate all players
+		foreach (GameObject p in players) {
+			p.SetActive (false);
 		}
+		/* foreach (GameObject player in players) {
+			if (player.GetComponent<Player> ().timeScore > 50) {
+				winPanel.SetActive (true);
+				GameObject.Find ("WinnerNameText").GetComponent<Text> ().text = "Good job " + player.GetComponent<Player> ().playerName;
+				// Deactivate all players
+				foreach (GameObject p in players) {
+					p.SetActive (false);
+				}
+			}
+		} */
+	}
+
+	void GoToSettings() {
+		/*
+		foreach (GameObject player in players) {
+			Destroy (player);
+		}
+		Application.LoadLevel ("Settings");
+		*/ 
+		Debug.Log ("GoToSettingsPlz");
+	} 
+		
+
+	void RestartGame() {
+		Debug.Log ("RESTART THIS");
 	}
 }

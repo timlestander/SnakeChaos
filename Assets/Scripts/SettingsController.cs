@@ -72,8 +72,6 @@ public class SettingsController : MonoBehaviour {
 		GameObject[] speedValues = GameObject.FindGameObjectsWithTag ("speedField").OrderBy (g => g.transform.GetSiblingIndex ()).ToArray();
 		GameObject[] colorValues = GameObject.FindGameObjectsWithTag ("colorField").OrderBy (g => g.transform.GetSiblingIndex ()).ToArray();
 
-		Debug.Log ("LENGTH IS " + nameValues.Length);
-
 		for (int x = 0; x < playerCount; x++) {
 
 			GameObject tempPlayer = (GameObject)Instantiate (playerPrefab, Vector3.zero, Quaternion.identity);

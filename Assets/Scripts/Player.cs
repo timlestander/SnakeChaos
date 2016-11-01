@@ -17,17 +17,14 @@ public class Player : MonoBehaviour {
 	KeyCode leftTurn;
 	KeyCode rightTurn;
 	KeyCode boostKey;
-	string playerName;
 
-	Rect boostRect;
-	Texture2D boostTexture;
-
-	Color playerColor;
-	int playerId; 
+	public Color playerColor;
+	public int playerId; 
 
 	[HideInInspector]
-	public float timeScore;
-	public float killScore;
+	public int timeScore;
+	public int killScore;
+	public string playerName;
 
 	bool isIt = false;
 
@@ -43,17 +40,12 @@ public class Player : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		SpawnPlayer ();
-		int yPos = 40 + (playerId * 40);
-		boostRect = new Rect (20, yPos, 100, 5);
-		boostTexture = new Texture2D (1, 1);
-		boostTexture.SetPixel (0, 0, playerColor);
-		boostTexture.Apply ();
 		InvokeRepeating ("IncreaseScore", 1.0f, 1.0f);
 	}
 
 	// Update is called once per frame
 	void Update () {
-
+		
 		if (Input.GetKey (leftTurn)) {
 			currentRotation += rotationSensitivity * Time.deltaTime;
 		}
@@ -102,32 +94,24 @@ public class Player : MonoBehaviour {
 			other.gameObject.SetActive (false);
 		} else if (other.gameObject.CompareTag("Bodypart")) {
 			if (!bodyParts.Contains (other.transform)) {
-				KillPlayer ();
-				Player collidingWith = null;
-				GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-				foreach (GameObject player in players) {
-					Player otherPlayer = player.GetComponent<Player> ();
-					if (otherPlayer.bodyParts.Contains (other.transform)) {
-						if (isIt) {
+				if (isIt) {
+					GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+					foreach (GameObject player in players) {
+						Player otherPlayer = player.GetComponent<Player> ();
+						if (otherPlayer.bodyParts.Contains (other.transform)) {
 							otherPlayer.isIt = true;
 							otherPlayer.StartGlowing ();
 						}
-						collidingWith = otherPlayer;
 					}
 				}
-
 				isIt = false;
-
-				if (collidingWith != null) {
-					collidingWith.killScore += 1;
-				}
+				KillPlayer ();
 			}
 		}
 	}
 
 	void KillPlayer() {
 		gameObject.GetComponent<SpriteRenderer> ().enabled = false;
-		// gameObject.SetActive (false);
 		foreach (Transform body in bodyParts) {
 			body.gameObject.SetActive (false);
 		}
@@ -139,7 +123,6 @@ public class Player : MonoBehaviour {
 
 		isIt = false;
 		powerupTriggered = false;
-		//StopCoroutine ("IncreaseScore");
 	}
 
 	void SpawnPlayer() {
@@ -176,15 +159,6 @@ public class Player : MonoBehaviour {
 
 	void Rotation() {
 		transform.rotation = Quaternion.Euler (new Vector3 (transform.rotation.x, transform.rotation.y, currentRotation));
-	}
-
-	void OnGUI() {
-		float ratio = boostCharge / 100;
-		float rectWidth = ratio * 100;
-		boostRect.width = rectWidth;
-		GUI.DrawTexture (boostRect, boostTexture);
-		float yPos = 20 + (playerId * 40);
-		GUI.Label (new Rect (20, yPos, 200, 20), getScoreString());
 	}
 
 	string getScoreString() {
@@ -271,29 +245,34 @@ public class Player : MonoBehaviour {
 	void IncreaseScore() {
 		if (isIt) {
 			timeScore += 1;
+			GameObject.Find ("ScoreboardController").GetComponent<ScoreboardController> ().UpdateScore (playerId, timeScore);
+
+			if (timeScore >= 50) {
+				GameObject.Find ("Game Controller").GetComponent<GameController> ().ShowWinScreen (playerName, playerColor);
+			}
 		}
 	}
 
 	Color getPlayerColor(string colorString) {
 		Color color;
 		switch (colorString) {
-			case "GREEN":
-				color = Color.green;
+		case "GREEN":
+			color = Color.green;
 				break;
-			case "RED":
-				color = Color.red;
+		case "RED":
+			color = Color.red;
 				break;
-			case "YELLOW":
-				color = Color.yellow;
+		case "YELLOW":
+			color = Color.yellow;
 				break;
-			case "BLUE":
-				color = Color.blue;
+		case "BLUE":
+			color = Color.blue;
 				break;
-			case "CYAN":
-				color = Color.cyan;
+		case "CYAN":
+			color = Color.cyan;
 				break;
-			default: 
-				color = Color.gray;
+		default: 
+			color = Color.gray;
 				break;
 		}
 
