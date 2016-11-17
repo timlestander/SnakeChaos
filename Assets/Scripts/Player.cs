@@ -82,12 +82,19 @@ public class Player : MonoBehaviour {
 		} else if (other.gameObject.CompareTag ("selfSpeed")) {
 			activateSelfSpeed ();
 			Invoke ("deactivateSelfSpeed", powerupTime);
-			Destroy(other.gameObject);
-		}
-		else if (other.gameObject.CompareTag ("enemySpeed")) {
+			Destroy (other.gameObject);
+		} else if (other.gameObject.CompareTag ("selfSlow")) {
+			activateSlowSpeed ();
+			Invoke ("deactivateSlowSpeed", powerupTime);
+			Destroy (other.gameObject);
+		} else if (other.gameObject.CompareTag ("enemySpeed")) {
 			activateEnemySpeed ();
 			Invoke ("deactivateEnemySpeed", powerupTime);
-			Destroy(other.gameObject);
+			Destroy (other.gameObject);
+		} else if (other.gameObject.CompareTag ("enemySlow")) {
+			activateEnemySlow ();
+			Invoke ("deactivateEnemySlow", powerupTime);
+			Destroy (other.gameObject);
 		} else if (other.gameObject.CompareTag ("Diamond")) {
 			isIt = true;
 			StartGlowing ();
@@ -112,6 +119,7 @@ public class Player : MonoBehaviour {
 
 	void KillPlayer() {
 		gameObject.GetComponent<SpriteRenderer> ().enabled = false;
+		//gameObject.SetActive(false);
 		foreach (Transform body in bodyParts) {
 			body.gameObject.SetActive (false);
 		}
@@ -216,6 +224,57 @@ public class Player : MonoBehaviour {
 		}
 	}
 
+	void activateEnemySlow()
+	{
+		GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+		foreach (GameObject player in players)
+		{
+			if (player != gameObject)
+			{
+				player.GetComponent<Player>().speed = player.GetComponent<Player>().speed - 1.5f;
+				player.GetComponent<Player>().powerupTriggered = true;
+			}
+		}
+	}
+
+	void deactivateEnemySlow()
+	{
+		GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+		foreach (GameObject player in players)
+		{
+			if (player != gameObject)
+			{
+				if (player.GetComponent<Player>().speed != 3.5f) { 
+					player.GetComponent<Player>().speed = player.GetComponent<Player>().speed + 1.5f;
+					player.GetComponent<Player>().powerupTriggered = false;
+					player.GetComponent<Player>().boostTriggered = false;
+				}
+			}
+		}
+	}
+
+	void activateSlowSpeed()
+	{
+		if (boostTriggered)
+		{
+			speed = 2.5f;
+		}else
+		{
+			speed = speed - 1.5f;
+		}
+		powerupTriggered = true;
+	}
+
+	void deactivateSlowSpeed()
+	{
+		if (speed != 3.5f)
+		{
+			speed = speed + 1.5f;
+			powerupTriggered = false;
+			boostTriggered = false;
+		}
+	}
+
 	float lerpTime = 0.1f;
 	IEnumerator MakeItGlow() {
 		while (isIt) 
@@ -257,19 +316,16 @@ public class Player : MonoBehaviour {
 		Color color;
 		switch (colorString) {
 		case "GREEN":
-			color = Color.green;
+			color = new Color (0.5f, 1f, 0.5f);
 				break;
 		case "RED":
-			color = Color.red;
+			color = new Color (1f, 0.5f, 0.5f);
 				break;
 		case "YELLOW":
-			color = Color.yellow;
+			color = new Color (0.99f, 1f, 0f);
 				break;
 		case "BLUE":
-			color = Color.blue;
-				break;
-		case "CYAN":
-			color = Color.cyan;
+			color = new Color(0.5f, 0.5f, 1f);
 				break;
 		default: 
 			color = Color.gray;

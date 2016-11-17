@@ -7,14 +7,18 @@ public class GameController : MonoBehaviour {
 	public GameObject playerPrefab;
 	public GameObject selfspeedPrefab;
 	public GameObject enemySpeedPrefab;
+	public GameObject selfSlowPrefab;
     public GameObject diamondPrefab;
+	public GameObject enemySlowPrefab;
 
 	public GameObject restartButton;
 	public GameObject settingsButton;
 
 	private GameObject[] players;
 	private GameObject winPanel;
+	private int spawnTime;
 
+	// Use this for initialization
 	// Use this for initialization
 	void Start ()
 	{
@@ -24,27 +28,31 @@ public class GameController : MonoBehaviour {
 		winPanel.SetActive (false);
 		players = GameObject.FindGameObjectsWithTag ("Player");
 		RespawnDiamond ();
-		SpawnPowerups ();
+		spawnTime = Random.Range(0, 5);
+		Invoke("SpawnPowerups", spawnTime);
 	}
-		
+
 	// Update is called once per frame
 	void Update () {
-		
+
 	}
-		
-	float spawnTime = 4f;
+
 	void SpawnPowerups()
 	{
 		float x = Random.Range (-3.9f, 8.8f);
 		float y = Random.Range (-3.9f, 4.2f);
-		int spawnType = Random.Range (0, 2);
+		int spawnType = Random.Range (0, 4);
 
 		if (spawnType == 0) {
 			Instantiate (selfspeedPrefab, new Vector2 (x, y), Quaternion.identity);
 		} else if (spawnType == 1) {
 			Instantiate (enemySpeedPrefab, new Vector2 (x, y), Quaternion.identity);
+		} else if (spawnType == 2) {
+			Instantiate (selfSlowPrefab, new Vector2 (x, y), Quaternion.identity);
+		} else if (spawnType == 3) {
+			Instantiate (enemySlowPrefab, new Vector2 (x, y), Quaternion.identity);
 		}
-			
+
 		int spawnTime = Random.Range (2, 20);
 		Invoke ("SpawnPowerups", spawnTime);
 	}
