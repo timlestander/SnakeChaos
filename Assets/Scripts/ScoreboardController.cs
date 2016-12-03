@@ -38,6 +38,7 @@ public class ScoreboardController : MonoBehaviour {
 		GameObject tempBoost = Instantiate (boostRow);
 		tempRow.transform.SetParent (scoreboardPanel);
 		tempBoost.transform.SetParent (scoreboardPanel);
+		tempRow.transform.localScale = new Vector3(1.0f, 1.0f, 0);
 		tempRow.transform.GetChild (0).GetComponent<Text> ().text = name;
 		tempRow.transform.GetChild (0).GetComponent<Text> ().color = color;
 		tempRow.transform.GetChild (1).GetComponent<Text> ().text = "0";
